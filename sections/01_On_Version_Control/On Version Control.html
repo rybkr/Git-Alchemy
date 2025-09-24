@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>On Version Control</title>
+  <style>
+    /* Default styles provided by pandoc.
+    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+    */
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="../../styles/classless.css" />
+</head>
+<body>
+<h1 id="on-version-control">On Version Control</h1>
+<blockquote>
+<p>“There are two types of people: those who backup their files, and
+those who will.” <em>—Programming Wisdom</em></p>
+</blockquote>
+<p>The consequences of poor version management go far beyond mild
+inconvenience. Overwritten files force teams to reconstruct work from
+memory. Unclear change histories cause deployment failures and costly
+downtime. Solo developers lose working solutions, knowing they
+functioned yesterday, but unable to recover the critical modifications
+they made. These scenarios aren’t outliers; they’re inevitable when file
+evolution lacks intention.</p>
+<p>Let’s examine how version control offers practical solutions to these
+challenges as projects evolve. <strong>Version Control Systems
+(VCSs)</strong> are tools that track and manage file changes across a
+project’s lifecycle. They function as comprehensive change management
+tools, letting you revert to previous versions while maintaining a
+complete audit trail: what changed, when, who made the change, and
+why.</p>
+<hr />
+<h2 id="what-youll-learn">What You’ll Learn</h2>
+<p>By the end of this section, you’ll understand:</p>
+<ul>
+<li><p>The core problems that make version control essential for any
+evolving project</p></li>
+<li><p>The architectural evolution of version control systems</p></li>
+<li><p>Key trade-offs between different VCS architectures and why
+distributed systems, like Git, have become the industry
+standard</p></li>
+</ul>
+<hr />
+<h2 id="challenges-version-control-meets">Challenges Version Control
+Meets</h2>
+<p>VCSs address three core problems in evolving projects:</p>
+<ol type="1">
+<li><p><strong>Historical challenges:</strong> Preserving a complete
+record of how your project has evolved over time</p></li>
+<li><p><strong>Collaborative challenges:</strong> Coordinating
+seamlessly when multiple people work on the same project
+simultaneously</p></li>
+<li><p><strong>Branching challenges:</strong> Managing experimental work
+and parallel development efforts without losing control</p></li>
+</ol>
+<p>These problems exist in various forms, whether you’re a solo
+developer on a weekend project or part of a thousand-person engineering
+team building enterprise software. Let’s break down these three
+challenge categories and see their impact in practice.</p>
+<h3 id="historical-challenges">Historical Challenges</h3>
+<p>The first problem VCSs are designed to solve is maintaining a
+complete record of a project’s history. This includes knowing what
+changed, when it was changed, why it was changed, and who made the
+change.</p>
+<p><em>Picture this:</em> You’re building a simple task manager
+application. It starts with basic functionality:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># task_manager.py</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> add_task(title, description):</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Save task to file</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    ...</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> mark_complete(task_id):</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Mark task as done</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    ... </span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> list_tasks():</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Show all tasks</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    ...</span></code></pre></div>
+<blockquote>
+<p><strong>Note:</strong> This course uses programming examples to
+illustrate concepts, but no specific programming knowledge is required.
+The principles of version control apply to nearly any type of file on
+your computer: code, documents, designs, data, etc.</p>
+</blockquote>
+<p>As you continue with development, adding features like due dates and
+priority levels, you want to keep previous versions “just in case.” Just
+in case something breaks, gets lost, or becomes corrupted.</p>
+<p>Soon, your project directory looks like this:</p>
+<pre><code>.
+├── task_manager_final_final.py
+├── task_manager_final_old.py
+├── task_manager_final.py
+├── task_manager_old.py
+├── task_manager_v2.py
+└── task_manager.py</code></pre>
+<p>You have six files, three of which contain the word “final.”
+<strong>Which one actually works?</strong></p>
+<p>You’ll waste time opening files to figure out which has the features
+you need, and you’ll hesitate to delete old versions because, after all,
+<em>“I might need them later.”</em></p>
+<p>Perhaps you get clever with timestamps, naming your files:
+<code>task_manager_20250919.py</code>,
+<code>task_manager_20250922.py</code>. This helps with organization, but
+fundamental problems persist. You still can’t easily see what changed
+between versions, can’t remember why you made specific changes, and use
+unnecessary disk space with near-duplicate files. Manual versioning
+doesn’t scale, and human memory is unreliable for tracking code
+evolution.</p>
+<h3 id="collaborative-challenges">Collaborative Challenges</h3>
+<p>The second problem VCSs are designed to solve is collaboration among
+teammates. How can multiple people edit the same project simultaneously
+without creating irritating conflicts?</p>
+<p><em>Now picture</em> you’re working on the task manager application
+with a teammate. You email them your latest
+<code>task_manager.py</code>, and you both start adding features
+simultaneously. Your teammate emails back
+<code>task_manager_modified.py</code> with their changes.</p>
+<p>Here’s where things get messy. Your version has:</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> add_task(title, description):</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Basic task creation</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    ...</span></code></pre></div>
+<p>Your teammate’s version has:</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> add_task(title, description, priority<span class="op">=</span><span class="st">&quot;medium&quot;</span>):</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="co"># They&#39;ve added priority levels</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    ...</span></code></pre></div>
+<p>Additionally, your teammate introduced a completely new function that
+you were unaware of. <strong>How do you reconcile these
+changes?</strong></p>
+<p>You’re forced into manual file comparison, copying and pasting code
+snippets, hoping you don’t miss anything important or accidentally
+overwrite working functionality. This process becomes significantly more
+complex with the addition of more collaborators and larger projects.</p>
+<p>Changes can get lost during manual merging, conflicting modifications
+can create bugs, and there is no systematic record of who made changes,
+what they were, or when. When issues arise, identifying their source
+becomes a time-consuming search through email threads and file
+timestamps.</p>
+<h3 id="branching-challenges">Branching Challenges</h3>
+<p>The third problem VCSs are designed to solve is experimentation
+without fear. How can we experiment with a project without the constant
+worry of breaking everything beyond repair?</p>
+<p><em>Imagine</em> you want to experiment with a major refactoring.
+Instead of standalone functions, perhaps you want to abstract into a
+<code>TaskManager</code> class:</p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> TaskManager:</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>):</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.tasks <span class="op">=</span> []</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> add_task(<span class="va">self</span>, title, description):</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Add a task</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>        ...</span></code></pre></div>
+<p><strong>What if this experiment fails?</strong> What if you break
+everything and can’t get back to your working version? What if your
+teammate discovers a critical bug that needs immediate fixing while
+you’re mid-experiment? What if a Tyrannosaurus Rex comes and stomps on
+your car?</p>
+<p>The manual versioning approach fails spectacularly in all of these
+scenarios. It forces you to make a complete copy of your project folder
+and name it something like <code>task_manager_backup</code> or
+<code>critical_bugfix_copy</code>. However, now you have multiple
+sources of “truth” scattered across your file system. When your teammate
+needs to fix that critical bug, which version do they work on? How do
+you ensure their fix propagates into your experimental branch? How do
+you keep track of which changes belong where?</p>
+<p>With manual versioning, there is no clear record of what your
+experiment was trying to accomplish. If you want to keep only parts of
+your experimental changes, you’re back to manual file comparison. When
+working with others, coordination becomes a nightmare of shared drives
+and email attachments.</p>
+<p>Without a systematic way to branch, experiment, and merge changes
+back together, innovation becomes paralyzing. You either avoid trying
+new approaches altogether, or you spend significant time creating
+elaborate backup schemes that still don’t solve the fundamental problem
+of safely exploring different solutions in parallel.</p>
+<hr />
+<p>These three types of challenges—historical tracking, collaboration
+coordination, and safe experimentation—have driven the evolution of
+version control systems over the past four decades. Each generation of
+VCS emerged to address the limitations of its predecessor, creating an
+architectural progression that mirrors the growing complexity of
+software development itself.</p>
+<p>Understanding this evolution helps clarify not just <em>what</em>
+different systems do, but <em>why</em> they work the way they do.</p>
+<hr />
+<h2 id="types-of-version-control-systems">Types of Version Control
+Systems</h2>
+<p>Version control systems can be primarily classified into three
+distinct architectures: <em>local</em>, <em>centralized</em>, and
+<em>distributed</em>. Each architecture emerged to address technological
+and collaborative constraints of its era. We’ll trace their evolution
+chronologically.</p>
+<h3 id="local-version-control-systems">Local Version Control
+Systems</h3>
+<p>As we established earlier, the most basic approach to version control
+involves manually copying files with variations such as
+<code>document.txt</code>, <code>document_old.txt</code>, and
+<code>document_final.txt</code>. While intuitive, this method creates
+organizational chaos and offers no systematic way to track changes or
+their rationale.</p>
+<p><strong>Local version control systems</strong> were developed by our
+early human ancestors in the 1980s to solve these problems. A local VCS
+maintains a structured repository on an individual machine,
+automatically tracking modifications and storing complete version
+histories.</p>
+<figure>
+<img src="assets/local_vcs_diagram.png" alt="Local VCS Diagram" />
+<figcaption aria-hidden="true">Local VCS Diagram</figcaption>
+</figure>
+<p>Among the most influential local VCSs was RCS (Revision Control
+System), developed in 1982 at Purdue University by Walter F. Tichy. RCS
+stored incremental changes, called deltas, between file versions.
+Instead of maintaining multiple complete copies of a document, RCS
+stored one base version plus the deltas needed to recreate each
+subsequent version.</p>
+<p>While local VCSs solved individual workflow problems, their
+collaboration limitations created demand for more sophisticated
+collaborative systems.</p>
+<h3 id="centralized-version-control-systems">Centralized Version Control
+Systems</h3>
+<p>The next evolution came with <strong>centralized version control
+systems</strong>, which addressed the collaboration problem that plagued
+local VCSs. Centralized systems, such as CVS (Concurrent Versions
+System), Subversion (SVN), and Perforce, use a single server to store
+the complete version history of the project. Developers checkout files
+from this central repository, make modifications, and commit those
+changes back to the central repository.</p>
+<figure>
+<img src="assets/centralized_vcs_diagram.png"
+alt="Centalized VCS Diagram" />
+<figcaption aria-hidden="true">Centalized VCS Diagram</figcaption>
+</figure>
+<p>With the centralized approach, multiple developers could work on the
+same project simultaneously, with the server coordinating changes and
+preventing conflicts. Administrators gained fine-grained control over
+who could access which parts of the codebase. The centralized nature
+also made backup and maintenance more manageable since there was only
+one authoritative source to protect.</p>
+<p>However, centralized systems introduced their own set of challenges.
+The central server became a single point of failure; if it went down,
+nobody could collaborate or save versioned changes to their work.
+Network connectivity became essential for any operation. Additionally,
+since each client maintained only the current snapshot of files (not the
+full history), developers were heavily dependent on the server for
+operations such as viewing change history or comparing versions.</p>
+<h3 id="distributed-version-control-systems">Distributed Version Control
+Systems</h3>
+<p>The limitations of centralized systems led to the development of
+<strong>distributed version control systems</strong> in the early 2000s.
+Systems like Git and Mercurial fundamentally changed how developers
+conceptualize version control.</p>
+<p>In a distributed model, every client maintains a complete copy of the
+project history, not just the current snapshot. When you clone a
+repository, you get the full backup of all the data. This means that if
+any server dies, any of the client repositories can be copied back to
+restore it.</p>
+<figure>
+<img src="assets/distributed_vcs_diagram.png"
+alt="Distributed VCS Diagram" />
+<figcaption aria-hidden="true">Distributed VCS Diagram</figcaption>
+</figure>
+<p>With the distributed approach, developers can work offline,
+committing changes and viewing history without network access. Multiple
+backup copies naturally exist, as every clone is a full backup. Teams
+can establish multiple workflows; they might have several remote
+repositories for different purposes, or developers might share changes
+directly between their repositories without going through a central
+server.</p>
+<p>This flexibility comes with complexity, as teams need clear workflows
+for how changes flow between repositories, which this course addresses.
+The robustness and flexibility of distributed systems have made them the
+dominant choice for modern software development, with Git becoming
+nearly ubiquitous in the industry.</p>
+<hr />
+<h2 id="next-steps">Next Steps</h2>
+<p>Understanding version control architecture explains why Git became
+the industry standard, but not why it surpassed other distributed VCS
+competitors like Mercurial and Bazaar. In our next section,
+<strong>“Git’s Competitive Advantage,”</strong> we’ll examine the design
+philosophy that made Git uniquely successful.</p>
+<hr />
+<h2 id="summary">Summary</h2>
+<p>Version control systems are essential infrastructure for any project
+involving multiple files, iterations, or collaborators. VCSs address
+three fundamental challenges in iterative development:</p>
+<ol type="1">
+<li><p><strong>Historical tracking:</strong> What changed, when, by
+whom, and why?</p></li>
+<li><p><strong>Collaboration:</strong> How can multiple developers work
+simultaneously without conflicts?</p></li>
+<li><p><strong>Parallel development:</strong> How can we experiment
+safely without breaking the main system?</p></li>
+</ol>
+<p>Three primary VCS architectures evolved sequentially to address these
+needs, each addressing limitations of its predecessor:</p>
+<ol type="1">
+<li><p><strong>Local VCS:</strong> Database-driven change tracking on
+individual machines</p></li>
+<li><p><strong>Centralized VCS:</strong> Server-based repository
+managing all project changes</p></li>
+<li><p><strong>Distributed VCS:</strong> Complete local repositories
+with distributed synchronization capabilities</p></li>
+</ol>
+<p>Modern development relies on distributed systems like Git, which
+combine the benefits of the two other approaches.</p>
+<hr />
+<p><em>© 2025 Ryan Baker ~ Licenced under <a
+href="https://creativecommons.org/licenses/by-sa/4.0">CC BY-SA 4.0</a> ~
+Modified: September 24, 2025</em></p>
+</body>
+</html>
