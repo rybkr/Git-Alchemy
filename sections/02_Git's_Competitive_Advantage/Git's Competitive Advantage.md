@@ -70,10 +70,21 @@ Even in repositories with thousands of files and years of history, these operati
 
 ### Builtin Integrity
 
-Every piece of data in git is checksummed before it is stored then referred to by that checksum.
+Every piece of data in Git is checksummed before it is stored and then referred to by that checksum.
 This means it's impossible to change the contents of any file or directory in a Git project without Git knowing about it.
+This isn't a feature you enable or a setting you configure, it's fundamental to how Git stores and references data.
 
-The mechanism Git uses for checksumming is a SHA-1 hash. This is a 40 character hexadecimal string (0-9 and a-f) and is calculated based off the contents of a file or directory structure in Git.
+The mechanism Git uses for checksumming is called [SHA-1](https://en.wikipedia.org/wiki/SHA-1) (Secure Hash Algorithm 1).
+This hash function takes any input, a file, a directory structure, a commit object, and produces a 40-character hexadecial string composed of the digits `0-9` and letters `a-f`.
+The crucial property of this hash is that it's deterministic: the same input always produces the same hash, but even the tiniest change to the input produces a completely different hash.
+
+For example, the hash for the current commit of the directory holding these lecture notes is:
+
+```
+273b1294419ffbce11002241aff9d0839eb1172c
+```
+
+And even though I've only added (this) one sentence, now the hash is:
 
 ---
 
