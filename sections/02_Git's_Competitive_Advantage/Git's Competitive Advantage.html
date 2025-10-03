@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Git's Competitive Advantage</title>
+  <style>
+    /* Default styles provided by pandoc.
+    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+    */
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <link rel="stylesheet" href="../../styles/classless.css" />
+</head>
+<body>
+<h1 id="gits-competitive-advantage">Git’s Competitive Advantage</h1>
+<blockquote>
+<p>“Git isn’t just a version control system; it’s a framework of trust.
+A record of vision. A space where every branch reflects thought, and
+every commit carries intent.” <em>—Mohamed Yasser</em></p>
+</blockquote>
+<p>In the spring of 2005, Linus Torvalds found himself facing an
+unexpected crisis. The Linux kernel project, which had grown from his
+personal experiment into a global collaboration involving thousands of
+developers, was suddenly without its version control system. BitKeeper,
+the proprietary tool that had managed the kernel’s development for three
+years, was no longer available to the open-source community after a
+licensing dispute. With characteristic pragmatism and a touch of
+impatience, Torvalds surveyed the existing alternatives, such as CVS,
+Subversion, and found them all lacking. They were too slow, too
+centralized, or simply inadequate for the scale and distributed nature
+of the Linux kernel development.</p>
+<p>Rather than compromise or wait for someone else to solve the problem,
+Torvalds embarked on a two-week coding sprint that would produce the
+initial version of Git. Drawing inspiration from his experience with
+BitKeeper’s distributed model while rejecting its complexity, he
+designed a system that was blindingly fast, completely distributed, and
+robust enough to handle the kernel’s sprawling development process. By
+April 2005, Git was managing its own source code, and within months it
+had proven itself capable of handling one of the world’s most complex
+software projects, setting the stage for its eventual dominance in the
+version control landscape.</p>
+<hr />
+<h2 id="what-youll-learn">What You’ll Learn</h2>
+<hr />
+<h2 id="gits-design-philosophy">Git’s Design Philosophy</h2>
+<p>When Torvalds set out to build Git, he wasn’t simply creating another
+version control system. He was solving specific problems that had
+frustrated him during Linux kernel development, problems that existing
+tools failed to adequately address.</p>
+<p>Git’s design reflects three core priorities that distinguished it
+from competitors:</p>
+<ol type="1">
+<li><p><strong>Speed at scale:</strong> The Linux kernel repository
+contained thousands of files and years of history. Git needed to handle
+operations likes commits, branches, and merges in seconds, not mnutes.
+This requirement influenced every architectureal decision, from how Git
+stores data to how it tracks changes.</p></li>
+<li><p><strong>Distributed integrity:</strong> With thousands of
+developers worldwide contributing code, Git needed cryptographic
+guarantees that repository history couldn’t be corrupted or tampered
+with, whether accidentally or maliciously. Every object in Git is
+checksummed, making it virtually impossible to change any file, date, or
+commit message without Git detecting it.</p></li>
+<li><p><strong>Non-linear development:</strong> Kernel development
+involved hundreds of experimental branches being created, modified, and
+merged daily. Git needed to make branching and merging so lightweight
+and reliable that developers wouldn’t hesitate to create branches for
+even minor experiments.</p></li>
+</ol>
+<p>These priorities led to architectural choices that differentiate Git
+from both its predecessors and its distributed contemporaries.</p>
+<h3 id="thinking-in-snapshots">Thinking in Snapshots</h3>
+<p>The most fundamental distinction between Git and nearly every other
+VCS lies in how it conceptualizes data. Most systems, including CVS,
+Subversion, and Perforce, store information as a list of file-based
+changes. They maintain a base version of each file, then record the
+differences (deltas) between successive versions. This is commonly known
+as <em>delta-based version control.</em></p>
+<figure>
+<img src="assets/delta_based_vcs_illustrated.png"
+alt="Delta-Based Version Control Illustrated" />
+<figcaption aria-hidden="true">Delta-Based Version Control
+Illustrated</figcaption>
+</figure>
+<p>When you want version 5 of a file, the system starts with the base
+version and sequentially applies delta 1, then delta 2, then delta 3,
+and so on until it reconstructs the version you requested. This approach
+seems intuitive because it mirrors how we conceptualize file
+modifications and appears space-efficient.</p>
+<p>Git rejects this model entirely. Instead of storing deltas, Git takes
+a complete snapshot of your project at each version. When you
+<em>commit</em> a version, Git captures a snapshot of what every file in
+your project looks like at that precise moment and stores a reference to
+that snapshot. This means Git conceptualizes its data as a stream of
+snapshots, not as a series of incremental changes.</p>
+<figure>
+<img src="assets/snapshot_based_vcs_illustrated.png"
+alt="Snapshot-Based Version Control Illustrated" />
+<figcaption aria-hidden="true">Snapshot-Based Version Control
+Illustrated</figcaption>
+</figure>
+<p>This architectural decision has profound implications for performance
+and workflow. When you check out a previous version of your project, Git
+doesn’t need to reconstruct it by walking through a chain of deltas. It
+simply retrieves the snapshot directly. This makes operations like
+switching branches, viewing history, or comparing versions
+extraordinarily fast. Even in repositories with thousands of files and
+years of history, these operations typically complete in
+milliseconds.</p>
+<h3 id="builtin-integrity">Builtin Integrity</h3>
+<p>Every piece of data in git is checksummed before it is stored then
+referred to by that checksum. This means it’s impossible to change the
+contents of any file or directory in a Git project without Git knowing
+about it.</p>
+<p>The mechanism Git uses for checksumming is a SHA-1 hash. This is a 40
+character hexadecimal string (0-9 and a-f) and is calculated based off
+the contents of a file or directory structure in Git.</p>
+<hr />
+<h2 id="the-three-file-states">The Three File States</h2>
+<p>Intuitively, one would expect a version control system to manage
+files in two states: <strong>modified</strong> or
+<strong>unmodified</strong>. On a commit, the system would mark the
+changes and call every file unmodified. Git, on the other hand, adds an
+intermediate stage that allows for more fine grained control over
+commits and workflow. The three distinct states are:</p>
+<ol type="1">
+<li><p><strong>Modified:</strong> You’ve changed a file but haven’t yet
+told Git to record that change.</p></li>
+<li><p><strong>Staged:</strong> You’ve marked a file in its current
+state to go into your next snapshot. This is the intermediate
+stage.</p></li>
+<li><p><strong>Committed:</strong> The data is stored in your local Git
+repository. This is equivalent to an “unmodified” state.</p></li>
+</ol>
+<hr />
+<h2 id="next-steps">Next Steps</h2>
+<hr />
+<h2 id="summary">Summary</h2>
+<hr />
+<p><em>© 2025 Ryan Baker ~ Licenced under <a
+href="https://creativecommons.org/licenses/by-sa/4.0">CC BY-SA 4.0</a> ~
+Modified: September 24, 2025</em></p>
+</body>
+</html>
